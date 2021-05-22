@@ -3,10 +3,10 @@
 
 namespace App\Repository\Eloquent;
 
-
 use App\Models\SubscribeEmail;
 use App\Repository\SubscribeEmailInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class SubscribeEmailRepository extends BaseRepository implements SubscribeEmailInterface
 {
@@ -29,6 +29,7 @@ class SubscribeEmailRepository extends BaseRepository implements SubscribeEmailI
     public function store($request)
     {
         $this->model->create($request->all());
+        Mail::to($request->email)->send(new \App\Mail\SubscribeEmail($request->full_name, 'Created'));
         session()->flash('success','Subscribe Email Added Successfully');
         return redirect()->route($this->module . '.index');
     }
@@ -49,6 +50,7 @@ class SubscribeEmailRepository extends BaseRepository implements SubscribeEmailI
     public function update($request, $id)
     {
         $this->find($id)->update($request->all());
+        Mail::to($request->email)->send(new \App\Mail\SubscribeEmail($request->full_name, 'Updated'));
         session()->flash('success','Subscribe Email Updated Successfully');
         return redirect()->route($this->module . '.index');
     }
